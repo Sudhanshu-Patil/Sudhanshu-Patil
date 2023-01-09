@@ -1,4 +1,5 @@
 ### Hi there 👋
+Myself, Sudhanshu Patil, currently persuing B.E. ECE from BITS-PILANI,, Hyderabad Campus
 
 <!--
 **Sudhanshu-Patil/Sudhanshu-Patil** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
