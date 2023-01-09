@@ -1,5 +1,5 @@
 ### Hi there 👋
-Myself, Sudhanshu Patil, currently persuing B.E. ECE from BITS-PILANI, Hyderabad Campus.
+Myself, Sudhanshu Patil, currently persuing B.E. ECE from BITS-PILANI, Hyderabad Campus.<p>
 Intrested in learning Web-Dev.
 Currently using HTML-CSS.
 <!--
