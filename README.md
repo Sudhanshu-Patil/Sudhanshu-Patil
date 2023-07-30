@@ -1,7 +1,7 @@
 ### Hi there 👋
-Myself, Sudhanshu Patil, currently persuing B.E. ECE from BITS-PILANI, Hyderabad Campus.<p>
-Intrested in learning Web-Dev.
-Currently using HTML-CSS.
+Myself, Sudhanshu Patil, currently pursuing B.E. ECE from BITS-PILANI, Hyderabad Campus.<p>
+Interested in Development.
+Know C++, C, Python, HTML + CSS. 
 <!--
 **Sudhanshu-Patil/Sudhanshu-Patil** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
