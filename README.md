@@ -1,18 +1,14 @@
-### Hi there 👋
-Myself, Sudhanshu Patil, currently pursuing B.E. ECE from BITS-PILANI, Hyderabad Campus.<p>
-Interested in Dev.
-Have good knowledge of C++, C, Python, HTML + CSS
-<!--
-**Sudhanshu-Patil/Sudhanshu-Patil** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+### [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&random=false&width=435&lines=Hi%2C+I'm+Sudhanshu+Patil)](https://git.io/typing-svg)
 
-Here are some ideas to get you started:
+- 🌱 I’m currently learning DSA in C++
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+- 👯 I’m looking to collaborate on WebDev projects
+  
+- 🤔 I’m looking for internship opportunities in software domain.
+  
+- 💬 Ask me about Python | C++ | C | HTML/CSS | Games
+
+## My Socials:
+[![](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin)](www.linkedin.com/in/sudhpatil)
+[![](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:sudhanshupatil588@gmail.com)
+[![](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/sudhanshu._.patil/)
