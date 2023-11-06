@@ -1,6 +1,6 @@
 ### [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&random=false&width=435&lines=Hi%2C+I'm+Sudhanshu+Patil)](https://git.io/typing-svg)
 
-- 🌱 I’m currently learning DSA in C++
+- 🌱 I’m currently learning DSA, AI, and ML
 
 - 👯 I’m looking to collaborate on WebDev projects
   
