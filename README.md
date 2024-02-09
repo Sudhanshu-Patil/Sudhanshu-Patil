@@ -11,7 +11,7 @@
 ## My Socials:
 [![](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/sudhpatil)
 [![](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:sudhanshupatil588@gmail.com)
-[![](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/sudhanshu._.patil/)
+[![](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/sudhan_shuu/)
 
 [![GitHub Streak](https://streak-stats.demolab.com?user=Sudhanshu-Patil)](https://git.io/streak-stats)
 
