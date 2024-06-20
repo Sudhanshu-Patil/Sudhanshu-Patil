@@ -8,12 +8,13 @@
   
 - 💬 Ask me about Python | C++ | C | HTML/CSS | Games
 
-## My Socials:
+## Socials:
 [![](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/sudhpatil)
 [![](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:sudhanshupatil588@gmail.com)
 [![](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/sudhan_shuu/)
 
 [![GitHub Streak](https://streak-stats.demolab.com?user=Sudhanshu-Patil)](https://git.io/streak-stats)
 
-## My Github Stats
+## Github Stats
+<p align="center"> <img src="https://komarev.com/ghpvc/?username=Sudhanshu-Patil&label=Profile%20views&color=0e75b6&style=flat&base=415" alt="Sudhanshu-Patil" /> </p>
 <img src="https://github-readme-stats.vercel.app/api?username=Sudhanshu-Patil&show_icons=true"/>
