@@ -1,12 +1,10 @@
 ### [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&random=false&width=435&lines=Hi%2C+I'm+Sudhanshu+Patil)](https://git.io/typing-svg)
 
-- 🌱 I’m currently learning DSA, AI, and ML
-
-- 👯 I’m looking to collaborate on WebDev projects
+- 🌱 Practising DSA, alongwith AI and ML
   
 - 🤔 I’m looking for internship opportunities in software domain.
   
-- 💬 Ask me about Python | C++ | C | HTML/CSS | Games
+- 💬 Ask me about ML | DSA | Games
 
 ## Socials:
 [![](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/sudhpatil)
