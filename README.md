@@ -18,6 +18,6 @@
 <img src="https://github-readme-stats.vercel.app/api?username=Sudhanshu-Patil&show_icons=true"/>
 <p align='center'>
 <picture>
-<img src="https://raw.githubusercontent.com/hxu296/hxu296/output/github-contribution-grid-snake.svg" />
+<img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/github-contribution-grid-snake.svg" />
 </picture>
 </p>
