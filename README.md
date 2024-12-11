@@ -9,7 +9,7 @@
 ## 🌐 Socials:
 [![](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sudhpatil)
 [![](https://img.shields.io/badge/Gmail-D14836.svg?logo=gmail&logoColor=white)](mailto:sudhanshupatil588@gmail.com)
-[![](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://www.instagram.com/sudhan_shuu/)
+[![](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://www.instagram.com/sudhanshuu.p/)
 
 ## 💻 Tech Stack:
 <div align="left">
