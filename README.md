@@ -1,10 +1,10 @@
 ### [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&random=false&width=435&lines=Hi%2C+I'm+Sudhanshu+Patil)](https://git.io/typing-svg) <img align="right" alt="coding" width="400px" src="https://media0.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif">
 
-- 🌱 Practising DSA, alongwith AI and ML
+- 🌱 AI Engineer.
   
-- 🤔 I’m looking for internship opportunities in software domain.
+- 🤔 I’m looking for full-time opportunities as an AI Engineer/FDE.
   
-- 💬 Ask me about ML | DSA | Games
+- 💬 Ask me about AI/ML | RAG | DSA | Games
 
 ## 🌐 Socials:
 [![](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sudhpatil)
