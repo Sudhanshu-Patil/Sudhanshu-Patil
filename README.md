@@ -44,8 +44,11 @@
 ## Github Stats:
 <p align='center'> <img src="https://komarev.com/ghpvc/?username=Sudhanshu-Patil&label=Profile%20views&color=0e75b6&style=flat" alt="Sudhanshu-Patil" /> </p>
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Sudhanshu-Patil&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false&order=1" height="150" alt="stats graph"  />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs?username=Sudhanshu-Patil&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&order=2" height="150" alt="languages graph"  />
+  <img
+    src="https://streak-stats.demolab.com?user=Sudhanshu-Patil&theme=dracula"
+    height="150"
+    alt="GitHub Streak"
+  />
 </div>
 <div align="center">
   <picture>
