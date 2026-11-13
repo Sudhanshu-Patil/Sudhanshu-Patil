@@ -1,30 +1,17 @@
-# Sudhanshu Patil · AI Engineer
+<!-- Cards are animated SVGs drawn by scripts/render_profile_cards.py and refreshed daily by
+     .github/workflows/generate-snake-game.yml (published to the output branch). Design after
+     avivashishta.com's profile README. Keep this block free of blank lines and the cards in a
+     row on one line with no spaces between them: spacing is baked into the SVGs. -->
+<div align="center">
+<a href="https://sudhanshu-patil.vercel.app/"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/hero.svg" width="100%" alt="Sudhanshu Patil. AI engineer. I build grounded AI systems: agentic RAG, MCP tooling and voice agents." /></a><br>
+<img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/heatmap.svg" width="100%" alt="Contribution graph in blue, refreshed daily" /><br>
+<img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/activity.svg" width="100%" alt="Contributions in the last 12 months by month, with streak and busiest day" /><br>
+<a href="https://sudhanshu-patil.vercel.app/"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/build.svg" width="33.333%" alt="BUILD: 7 projects" /></a><a href="https://www.linkedin.com/in/sudhpatil"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/connect.svg" width="33.333%" alt="CONNECT on LinkedIn" /></a><a href="mailto:sudhanshupatil588@gmail.com"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/contact.svg" width="33.333%" alt="CONTACT: say hello" /></a><br>
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/title-work-dark.svg" /><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/title-work-light.svg" width="100%" alt="Selected work" /></picture><br>
+<a href="https://github.com/Sudhanshu-Patil/MediClaim"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-mediclaim.svg" width="33.333%" alt="MediClaim" /></a><a href="https://itinerary-concierge.onrender.com/"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-waypoint.svg" width="33.333%" alt="Waypoint" /></a><a href="https://github.com/Sudhanshu-Patil/Cedar-Lane-Receptionist"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-cedar-lane.svg" width="33.333%" alt="Cedar Lane" /></a><br>
+<a href="https://github.com/Sudhanshu-Patil/Redline"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-redline.svg" width="25%" alt="Redline" /></a><a href="https://github.com/Sudhanshu-Patil/telecom-request-workflow"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-telecom-triage.svg" width="25%" alt="Telecom Triage" /></a><a href="https://github.com/Sudhanshu-Patil/AI-Email-Reply"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-ai-email-reply.svg" width="25%" alt="AI Email Reply" /></a><a href="https://github.com/Sudhanshu-Patil/glance-chat"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-glance.svg" width="25%" alt="Glance" /></a>
+</div>
 
-<p align="center"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/hero.svg" alt="Sudhanshu Patil — AI Engineer" width="100%"></p>
-
-<p align="center"><a href="https://www.linkedin.com/in/sudhpatil"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/tile-linkedin.svg" width="32.5%" alt="Connect on LinkedIn"></a> <a href="https://sudhanshu-patil.vercel.app/"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/tile-work.svg" width="32.5%" alt="Explore selected work"></a> <a href="mailto:sudhanshupatil588@gmail.com"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/tile-contact.svg" width="32.5%" alt="Get in touch"></a></p>
-
-<p align="center"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/contributions.svg" width="100%" alt="Monthly contributions, current streak, active days and busiest day"></p>
-
-## Selected work
-
-<p align="center"><a href="https://github.com/Sudhanshu-Patil/MediClaim"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-mediclaim.svg" width="100%" alt="MediClaim — agentic RAG for insurance claims"></a></p>
-<p align="center"><a href="https://itinerary-concierge.onrender.com/"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-waypoint.svg" width="100%" alt="Waypoint — AI travel concierge"></a></p>
-<p align="center"><a href="https://github.com/Sudhanshu-Patil/Cedar-Lane-Receptionist"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-cedar-lane.svg" width="100%" alt="Cedar Lane — voice AI receptionist"></a></p>
-<p align="center"><a href="https://github.com/Sudhanshu-Patil/Redline"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-redline.svg" width="100%" alt="Redline — engineering drawing diffs and grounded chat"></a></p>
-<p align="center"><a href="https://github.com/Sudhanshu-Patil/telecom-request-workflow"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-telecom-triage.svg" width="100%" alt="Telecom Triage — confidence-gated AI"></a></p>
-<p align="center"><a href="https://github.com/Sudhanshu-Patil/AI-Email-Reply"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-ai-email-reply.svg" width="100%" alt="AI Email Reply — grounded email drafts"></a></p>
-<p align="center"><a href="https://github.com/Sudhanshu-Patil/glance-chat"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/repo-glance.svg" width="100%" alt="Glance — open-source portfolio assistant"></a></p>
-
-<p align="center"><img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/cards/contribution-graph.svg" width="100%" alt="Contribution graph in lime green"></p>
-
----
-
-The cards use my portfolio palette (`#0b0c0e`, `#131418`, `#bfe36b`) and embedded Geist font subsets. A scheduled GitHub Action refreshes contribution data and rebuilds the cards daily.
-
-To render a still version for a screenshot, install FontTools and run:
-
-```bash
-python -m pip install 'fonttools[woff,woff2]'
-STATIC=1 python scripts/render_profile_cards.py
-```
+<p align="center">
+<a href="https://sudhanshu-patil.vercel.app/">portfolio</a> &nbsp;/&nbsp; <a href="https://www.linkedin.com/in/sudhpatil">linkedin</a> &nbsp;/&nbsp; <a href="mailto:sudhanshupatil588@gmail.com">email</a>
+</p>
