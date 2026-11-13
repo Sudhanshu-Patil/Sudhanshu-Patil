@@ -1,73 +1,30 @@
-### [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&random=false&width=435&lines=Hi%2C+I'm+Sudhanshu+Patil)](https://git.io/typing-svg) <img align="right" alt="coding" width="400px" src="https://media0.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif">
+# Sudhanshu Patil · AI Engineer
 
-- 🌱 AI Engineer.
-  
-- 🤔 I’m looking for full-time opportunities as an AI Engineer/FDE.
-  
-- 💬 Ask me about AI/ML | RAG | DSA | Games
+<p align="center"><img src="cards/hero.svg" alt="Sudhanshu Patil — AI Engineer" width="100%"></p>
 
-## 🌐 Socials:
-[![](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sudhpatil)
-[![](https://img.shields.io/badge/Gmail-D14836.svg?logo=gmail&logoColor=white)](mailto:sudhanshupatil588@gmail.com)
-[![](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://www.instagram.com/sudhanshuu.p/)
+<p align="center"><a href="https://www.linkedin.com/in/sudhpatil"><img src="cards/tile-linkedin.svg" width="32.5%" alt="Connect on LinkedIn"></a> <a href="https://sudhanshu-patil.vercel.app/"><img src="cards/tile-work.svg" width="32.5%" alt="Explore selected work"></a> <a href="mailto:sudhanshupatil588@gmail.com"><img src="cards/tile-contact.svg" width="32.5%" alt="Get in touch"></a></p>
 
-## 💻 Tech Stack:
-<div align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" height="40" alt="cpp logo" />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg" height="40" alt="c logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" height="40" alt="java logo" />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" height="40" alt="python logo" />
-  <img width="12" />        
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="40" alt="javascript logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" height="40" alt="typescript logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="40" alt="react logo"  />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" height="40" alt="nodejs logo" />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg" height="40" alt="expressjs logo" />
-  <img width="12" />   
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" height="40" alt="expressjs logo" />
-  <img width="12" />   
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg" height="40" alt="postman logo" />
-  <img width="12" />      
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" height="40" alt="postman logo" />
-  <img width="12" />   
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/filezilla/filezilla-original.svg" height="40" alt="postman logo" />
-  <img width="12" />   
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/oracle/oracle-original.svg" height="40" alt="postman logo" />
-  <img width="12" /> 
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/neo4j/neo4j-original.svg" height="40" alt="postman logo" />
-  <img width="12" />  
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" height="40" alt="postman logo" />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-original.svg" height="40" alt="postman logo" />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg" height="40" alt="gcp logo" />
-  <img width="12" />        
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" height="40" alt="aws logo"  />
-  <img width="12" />    
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg" height="40" alt="figma logo" />
-  <img width="12" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" height="40" alt="figma logo" />
-  <img width="12" />
-</div>
+<p align="center"><img src="cards/contributions.svg" width="100%" alt="Monthly contributions, current streak, active days and busiest day"></p>
 
-## Github Stats:
-<p align='center'> <img src="https://komarev.com/ghpvc/?username=Sudhanshu-Patil&label=Profile%20views&color=0e75b6&style=flat" alt="Sudhanshu-Patil" /> </p>
-<div align="center">
-  <img
-    src="https://streak-stats.demolab.com?user=Sudhanshu-Patil&theme=dracula"
-    height="150"
-    alt="GitHub Streak"
-  />
-</div>
-<div align="center">
-  <picture>
-    <img src="https://raw.githubusercontent.com/Sudhanshu-Patil/Sudhanshu-Patil/output/github-contribution-grid-snake.svg" />
-  </picture>
-</div>
+## Selected work
+
+<p align="center"><a href="https://github.com/Sudhanshu-Patil/MediClaim"><img src="cards/repo-mediclaim.svg" width="100%" alt="MediClaim — agentic RAG for insurance claims"></a></p>
+<p align="center"><a href="https://itinerary-concierge.onrender.com/"><img src="cards/repo-waypoint.svg" width="100%" alt="Waypoint — AI travel concierge"></a></p>
+<p align="center"><a href="https://github.com/Sudhanshu-Patil/Cedar-Lane-Receptionist"><img src="cards/repo-cedar-lane.svg" width="100%" alt="Cedar Lane — voice AI receptionist"></a></p>
+<p align="center"><a href="https://github.com/Sudhanshu-Patil/Redline"><img src="cards/repo-redline.svg" width="100%" alt="Redline — engineering drawing diffs and grounded chat"></a></p>
+<p align="center"><a href="https://github.com/Sudhanshu-Patil/telecom-request-workflow"><img src="cards/repo-telecom-triage.svg" width="100%" alt="Telecom Triage — confidence-gated AI"></a></p>
+<p align="center"><a href="https://github.com/Sudhanshu-Patil/AI-Email-Reply"><img src="cards/repo-ai-email-reply.svg" width="100%" alt="AI Email Reply — grounded email drafts"></a></p>
+<p align="center"><a href="https://github.com/Sudhanshu-Patil/glance-chat"><img src="cards/repo-glance.svg" width="100%" alt="Glance — open-source portfolio assistant"></a></p>
+
+<p align="center"><img src="cards/contribution-graph.svg" width="100%" alt="Contribution graph in lime green"></p>
+
+---
+
+The cards use my portfolio palette (`#0b0c0e`, `#131418`, `#bfe36b`) and embedded Geist font subsets. A scheduled GitHub Action refreshes contribution data and rebuilds the cards daily.
+
+To render a still version for a screenshot, install FontTools and run:
+
+```bash
+python -m pip install 'fonttools[woff,woff2]'
+STATIC=1 python scripts/render_profile_cards.py
+```
