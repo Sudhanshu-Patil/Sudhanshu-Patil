@@ -163,17 +163,17 @@ def load_stats():
     }
 
 
-SKILLS = ["Agentic RAG", "Voice agents", "MCP tooling", "Evals & guardrails"]
-
-
 # ---- 1 · hero -----------------------------------------------------------------
 def hero():
     h = 420
-    pills = "".join(
-        f'<g class="sl" {d(0.5 + i * 0.15)}><rect x="560" y="{110 + i * 62}" width="272" height="46" rx="23" fill="none" stroke="{RULE}" stroke-width="1.5"/>'
-        f'<circle cx="586" cy="{133 + i * 62}" r="5" fill="{[TECH, STUDIO, LEARN, INK][i]}"/>'
-        f'<text x="604" y="{139 + i * 62}" font-family="{SANS}" font-size="17" fill="{INK}">{escape(t)}</text></g>'
-        for i, t in enumerate(SKILLS)
+    rows = open(os.path.join(ROOT, "data", "portrait.txt"), encoding="utf-8").read().splitlines()
+    ch = 300 / len(rows[0]) * 1.875
+    pills = "".join(  # rows print in top to bottom, like a slow terminal
+        f'<text class="f" style="animation-delay:{0.25 + i * 0.018:.3f}s;animation-duration:.35s" xml:space="preserve" '
+        f'x="540" y="{40 + (i + 0.75) * ch:.1f}" fill="{INK}" font-size="{ch * 0.86:.1f}" '
+        f'font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" textLength="300" '
+        f'lengthAdjust="spacing">{escape(r)}</text>'
+        for i, r in enumerate(rows)
     )
     body = f"""
 <defs>
