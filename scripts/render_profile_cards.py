@@ -36,19 +36,34 @@ def esc(value: object) -> str:
 
 
 def font_subset(characters: str) -> str:
-    """Fetch Geist's Latin subset, subset with pyftsubset and embed as base64 WOFF."""
-    url = "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap"
-    request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    """Fetch the Geist Latin font, subset it with pyftsubset and return base64 WOFF."""
+    css_url = "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap"
+    request = urllib.request.Request(css_url, headers={"User-Agent": "Mozilla/5.0"})
     css = urllib.request.urlopen(request, timeout=30).read().decode("utf-8")
-    latin = re.search(r"/\* latin \*/\s*@font-face\s*\{([^}]+)\}", css, re.S)
-    match = re.search(r"url\((https://[^)]+\.woff2?)\)", latin.group(1) if latin else css)
-    if not match:
-        raise RuntimeError("Google Fonts did not return a Geist Latin WOFF/WOFF2 URL")
-    request = urllib.request.Request(match.group(1), headers={"User-Agent": "Mozilla/5.0"})
-    source_bytes = urllib.request.urlopen(request, timeout=30).read()
+
+    # Google Fonts can change the order and formatting of its @font-face blocks.
+    # Match the Latin unicode range rather than depending on a comment's position.
+    font_blocks = re.findall(r"@font-face\s*\{([^}]+)\}", css, flags=re.I | re.S)
+    latin_blocks = [block for block in font_blocks if re.search(r"U\+0{0,4}0?-?00FF", block, re.I)]
+    candidates = latin_blocks or font_blocks
+    font_url = None
+    for block in candidates:
+        src = re.search(r"\bsrc\s*:\s*([^;]+)", block, flags=re.I | re.S)
+        if not src:
+            continue
+        url_match = re.search(r"url\(\s*['\"]?(https?://[^)'\"\s]+)", src.group(1), flags=re.I)
+        if url_match:
+            font_url = url_match.group(1)
+            break
+    if not font_url:
+        raise RuntimeError("Could not find a Geist font URL in Google Fonts CSS. Check the CSS response or font URL.")
+
+    request = urllib.request.Request(font_url, headers={"User-Agent": "Mozilla/5.0"})
+    font_bytes = urllib.request.urlopen(request, timeout=30).read()
     with tempfile.TemporaryDirectory() as temp:
-        source, target = Path(temp) / "geist.woff2", Path(temp) / "geist-subset.woff"
-        source.write_bytes(source_bytes)
+        source = Path(temp) / "geist.woff2"
+        target = Path(temp) / "geist-subset.woff"
+        source.write_bytes(font_bytes)
         subprocess.run([
             "pyftsubset", str(source), f"--output-file={target}", "--flavor=woff",
             "--layout-features=*", "--name-IDs=0,1,2,4,6", "--name-languages=0x409",
