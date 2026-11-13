@@ -1,222 +1,433 @@
 #!/usr/bin/env python3
-"""Render animated SVG profile cards. Set STATIC=1 to freeze the final frame."""
-from __future__ import annotations
+"""
+Render the profile README's cards as animated SVGs into cards/.
 
+Design: "Three Worlds" (paper, ink, one colour per world; Instrument Serif, Geist,
+Geist Mono), after avivashishta.com's profile README. Every card is a standalone SVG
+shown through <img>: inline CSS animations, SMIL, fonts embedded as data URIs.
+Fonts are subset WOFFs in fonts/ (SIL OFL). Data: data/contributions.json, the raw
+GraphQL contributionCalendar fetched by the workflow. Set STATIC=1 for end-state previews.
+"""
 import base64
-import datetime as dt
-import html
+import datetime
 import json
 import os
 import re
-import subprocess
-import tempfile
-import urllib.request
-from collections import defaultdict
-from pathlib import Path
+from html import escape
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "cards"
-DATA = ROOT / "data" / "contributions.json"
-STATIC = os.getenv("STATIC", "0") == "1"
-OWNER = "Sudhanshu-Patil"
-ACCENT, SURFACE, FG, MUTED, LINE = "#bfe36b", "#131418", "#ecedee", "#9a9da4", "#292b30"
-FEATURED = [
-    ("MediClaim", "Agentic RAG for insurance claims adjudication", "Hybrid + graph retrieval, QLoRA and human review.", f"https://github.com/{OWNER}/MediClaim", "PYTHON · AI / RAG"),
-    ("Waypoint", "An AI travel concierge that plans and adapts", "Verified travel plans, honest pricing and in-trip alerts.", "https://itinerary-concierge.onrender.com/", "AI · TRAVEL"),
-    ("Cedar Lane", "Voice AI receptionist that books real appointments", "Voice, calendar tools and reliable human handoff.", f"https://github.com/{OWNER}/Cedar-Lane-Receptionist", "TYPESCRIPT · VOICE AI"),
-    ("Redline", "Deterministic diffs for engineering drawings", "Compare revisions, then answer with cited, grounded chat.", f"https://github.com/{OWNER}/Redline", "PYTHON · DOCUMENT AI"),
-    ("Telecom Triage", "Confidence-gated AI for customer operations", "Automate clear requests; route uncertain cases to people.", f"https://github.com/{OWNER}/telecom-request-workflow", "PYTHON · AGENTS"),
-    ("AI Email Reply", "Grounded email drafts with a quality metric", "Evaluate grounding, intent, similarity, style and sendability.", f"https://github.com/{OWNER}/AI-Email-Reply", "PYTHON · EVALUATION"),
-    ("Glance", "An open-source AI assistant for any portfolio", "A playful, zero-dependency chat widget for the web.", f"https://github.com/{OWNER}/glance-chat", "JAVASCRIPT · OPEN SOURCE"),
-]
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.join(HERE, "..")
+DATA = os.path.join(ROOT, "data", "contributions.json")
+OUT = os.path.join(ROOT, "cards")
+FONTS = os.path.join(ROOT, "fonts")
+
+# ---- brand tokens -----------------------------------------------------------
+PAPER = "#f3f3f1"
+PAPER_DEEP = "#e2e2de"
+INK = "#111111"
+INK_SOFT = "#3a3a3c"
+MUTED = "#6e6e73"
+RULE = "#dcdcd7"
+TECH = "#2f55ff"
+STUDIO = "#ef3b2d"
+LEARN = "#ffc81a"
+W = 880  # full card width, GitHub's README column at 100%
+
+SERIF = "'Instrument Serif', Georgia, serif"
+SANS = "Geist, system-ui, -apple-system, sans-serif"
+MONO = "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
+
+FONT_FILES = {
+    "serif": ("Instrument Serif", "normal", 400, "serif-400.woff"),
+    "serif-i": ("Instrument Serif", "italic", 400, "serif-italic.woff"),
+    "sans": ("Geist", "normal", 400, "geist-400.woff"),
+    "sans-b": ("Geist", "normal", 600, "geist-600.woff"),
+    "mono": ("Geist Mono", "normal", 400, "geistmono-400.woff"),
+}
+
+BASE_CSS = """
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes nudge{0%,100%{transform:none}50%{transform:translateX(4px)}}
+@keyframes nudgeup{0%,100%{transform:none}50%{transform:translate(3px,-3px)}}
+.r{opacity:0;animation:rise .8s cubic-bezier(.2,.7,.2,1) both;transform-box:fill-box}
+.f{opacity:0;animation:fade .9s ease-out both}
+.g{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:grow .8s cubic-bezier(.2,.7,.2,1) both}
+.p{opacity:0;transform-box:fill-box;transform-origin:center;animation:pop .4s ease-out both}
+.live{animation:pulse 1.6s ease-in-out infinite}
+.n{transform-box:fill-box;animation:nudge 1.8s ease-in-out infinite}
+.nu{transform-box:fill-box;animation:nudgeup 1.8s ease-in-out infinite}
+@keyframes tilein{0%{opacity:0;transform:translateY(90px) scale(.6) rotate(-9deg)}55%{opacity:1;transform:translateY(-10px) scale(1.05) rotate(2deg)}75%{transform:translateY(3px) scale(.98) rotate(-.8deg)}90%{transform:translateY(-1px) scale(1.01) rotate(.2deg)}100%{opacity:1;transform:none}}
+@keyframes slidein{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+@keyframes arrowin{0%{opacity:0;transform:translateX(-30px)}60%{opacity:1;transform:translateX(6px)}100%{opacity:1;transform:none}}
+@keyframes roll{from{transform:translateY(60px)}to{transform:none}}
+@keyframes sheen{0%{transform:translateX(-260px) skewX(-20deg)}22%,100%{transform:translateX(420px) skewX(-20deg)}}
+@keyframes ring{0%{opacity:.7;transform:scale(.2)}100%{opacity:0;transform:scale(2.4)}}
+.ti{opacity:0;transform-box:fill-box;transform-origin:50% 60%;animation:tilein 1.1s cubic-bezier(.2,.8,.2,1) both}
+.sl{opacity:0;transform-box:fill-box;animation:slidein .6s cubic-bezier(.2,.7,.2,1) both}
+.ai{opacity:0;transform-box:fill-box;animation:arrowin .7s cubic-bezier(.2,.7,.2,1) both}
+.ro{transform-box:fill-box;animation:roll .8s cubic-bezier(.15,.8,.2,1) both}
+.sh{animation:sheen 5s ease-in-out infinite}
+.rg{opacity:0;transform-box:fill-box;transform-origin:center;animation:ring 1s ease-out both}
+@media (prefers-reduced-motion: reduce){.r,.f,.g,.p,.live,.n,.nu,.ti,.sl,.ai,.ro,.rg{animation:none!important;opacity:1!important;transform:none!important}.sh,.rg{display:none}}
+"""
 
 
-def esc(value: object) -> str:
-    return html.escape(str(value), quote=True)
+def font_face(keys):
+    out = []
+    for k in keys:
+        fam, style, weight, fn = FONT_FILES[k]
+        b64 = base64.b64encode(open(os.path.join(FONTS, fn), "rb").read()).decode()
+        out.append(
+            f"@font-face{{font-family:'{fam}';font-style:{style};font-weight:{weight};"
+            f"src:url(data:font/woff;base64,{b64}) format('woff')}}"
+        )
+    return "".join(out)
 
 
-def font_subset(characters: str) -> str:
-    """Fetch the Geist Latin font, subset it with pyftsubset and return base64 WOFF."""
-    css_url = "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap"
-    request = urllib.request.Request(css_url, headers={"User-Agent": "Mozilla/5.0"})
-    css = urllib.request.urlopen(request, timeout=30).read().decode("utf-8")
+GAP = 12          # gap between cards, baked into the SVGs (GitHub's own spacing is uneven)
+BOTTOM = 12       # bottom padding per row, matching GAP
+COL = W / 3       # each card in a row of three is exactly a third of the column
 
-    # Google Fonts can change the order and formatting of its @font-face blocks.
-    # Match the Latin unicode range rather than depending on a comment's position.
-    font_blocks = re.findall(r"@font-face\s*\{([^}]+)\}", css, flags=re.I | re.S)
-    latin_blocks = [block for block in font_blocks if re.search(r"U\+0{0,4}0?-?00FF", block, re.I)]
-    candidates = latin_blocks or font_blocks
-    font_url = None
-    for block in candidates:
-        src = re.search(r"\bsrc\s*:\s*([^;]+)", block, flags=re.I | re.S)
-        if not src:
-            continue
-        url_match = re.search(r"url\(\s*['\"]?(https?://[^)'\"\s]+)", src.group(1), flags=re.I)
-        if url_match:
-            font_url = url_match.group(1)
+
+def svg(w, h, body, fonts, label, extra_css="", left=0, right=0, bottom=BOTTOM):
+    """Card of w x h drawn at x=left inside a transparent canvas, padded so rows tile exactly."""
+    if left:
+        body = f'<g transform="translate({left:.3f} 0)">{body}</g>'
+    w, h = w + left + right, h + bottom
+    css = font_face(fonts) + BASE_CSS + extra_css
+    if os.environ.get("STATIC"):  # preview: show every animation at its end state
+        css += ".r,.f,.g,.p,.live,.n,.nu,.ti,.sl,.ai,.ro{animation:none!important;opacity:1!important;transform:none!important}.sh,.rg{display:none}"
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w:.3f}" height="{h}" viewBox="0 0 {w:.3f} {h}" '
+        f'role="img" aria-label="{escape(label)}"><title>{escape(label)}</title>'
+        f"<style>{css}</style>{body}</svg>"
+    )
+
+
+def write(name, content):
+    os.makedirs(OUT, exist_ok=True)
+    path = os.path.join(OUT, name)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+    print(f"wrote cards/{name} ({len(content) // 1024} KB)")
+
+
+def d(s):  # animation delay attribute
+    return f'style="animation-delay:{s:.2f}s"'
+
+
+def wrap(text, n):
+    lines, line = [], ""
+    for word in text.split():
+        if line and len(line) + 1 + len(word) > n:
+            lines.append(line)
+            line = word
+        else:
+            line = f"{line} {word}".strip()
+    return lines + [line] if line else lines
+
+
+def text_lines(x, y, lines, lh, attrs):
+    return "".join(
+        f'<text x="{x}" y="{y + i * lh}" {attrs}>{escape(l)}</text>' for i, l in enumerate(lines)
+    )
+
+
+def load_stats():
+    cal = json.load(open(DATA))
+    days = [{"date": x["date"], "count": x["contributionCount"]}
+            for w in cal["weeks"] for x in w["contributionDays"]]
+    months = {}
+    for x in days:
+        months[x["date"][:7]] = months.get(x["date"][:7], 0) + x["count"]
+    longest = run = 0
+    for x in days:
+        run = run + 1 if x["count"] else 0
+        longest = max(longest, run)
+    cur = 0
+    for x in reversed(days):  # a quiet today does not break the streak
+        if x["count"]:
+            cur += 1
+        elif x is not days[-1]:
             break
-    if not font_url:
-        raise RuntimeError("Could not find a Geist font URL in Google Fonts CSS. Check the CSS response or font URL.")
-
-    request = urllib.request.Request(font_url, headers={"User-Agent": "Mozilla/5.0"})
-    font_bytes = urllib.request.urlopen(request, timeout=30).read()
-    with tempfile.TemporaryDirectory() as temp:
-        source = Path(temp) / "geist.woff2"
-        target = Path(temp) / "geist-subset.woff"
-        source.write_bytes(font_bytes)
-        subprocess.run([
-            "pyftsubset", str(source), f"--output-file={target}", "--flavor=woff",
-            "--layout-features=*", "--name-IDs=0,1,2,4,6", "--name-languages=0x409",
-            f"--text={characters}",
-        ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        return base64.b64encode(target.read_bytes()).decode("ascii")
+    return {
+        "days": days, "total_contributions": cal["totalContributions"],
+        "monthly": [{"month": k, "total": v} for k, v in sorted(months.items())],
+        "current_streak": {"length": cur}, "longest_streak": {"length": longest},
+        "active_days": sum(1 for x in days if x["count"]),
+        "best_day": max(days, key=lambda x: x["count"]),
+    }
 
 
-def load_days() -> list[dict]:
-    if not DATA.exists():
-        return []
-    payload = json.loads(DATA.read_text(encoding="utf-8"))
-    if not isinstance(payload, (dict, list)):
-        return []
-    if isinstance(payload, list):
-        raw_days = payload
-    else:
-        raw_days = payload.get("contributionDays", [])
-        if not raw_days:
-            raw_days = [day for week in payload.get("weeks", []) for day in week.get("contributionDays", [])]
-    result = []
-    for item in raw_days:
-        try:
-            result.append({"date": dt.date.fromisoformat(item["date"]), "count": int(item.get("contributionCount", item.get("count", 0)))})
-        except (KeyError, TypeError, ValueError):
-            continue
-    return sorted(result, key=lambda day: day["date"])
+SKILLS = ["Agentic RAG", "Voice agents", "MCP tooling", "Evals & guardrails"]
 
 
-def start_svg(width: int, height: int, font_data: str, delay: float = 0) -> str:
-    motion = "" if STATIC else f"""
-      .reveal {{ animation: rise .75s cubic-bezier(.16,1,.3,1) {delay:.2f}s both; }}
-      @keyframes rise {{ from {{ opacity: 0; transform: translateY(12px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-      .pulse {{ animation: glow 2.8s ease-in-out {delay:.2f}s infinite; }}
-      @keyframes glow {{ 0%,100% {{ opacity: .45; }} 50% {{ opacity: 1; }} }}
-      @media (prefers-reduced-motion: reduce) {{ .reveal, .pulse {{ animation: none !important; }} .smil {{ display: none; }} }}
-    """
-    animate = "" if STATIC else f'<animate attributeName="opacity" values=".45;1;.45" dur="2.8s" begin="{delay:.2f}s" repeatCount="indefinite"/>'
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img">
-      <title>Sudhanshu Patil — AI Engineer profile card</title>
-      <style>@font-face {{ font-family: Geist; src: url(data:font/woff;base64,{font_data}) format('woff'); font-weight: 100 900; }}
-        text {{ font-family: Geist, Arial, sans-serif; }} .card {{ fill:{SURFACE}; stroke:{LINE}; stroke-width:1; }} {motion}</style>
-      <rect x=".5" y=".5" width="{width-1}" height="{height-1}" rx="20" class="card"/>
-      <circle cx="{width-30}" cy="28" r="3" fill="{ACCENT}" class="pulse smil">{animate}</circle>
-    '''
+# ---- 1 · hero -----------------------------------------------------------------
+def hero():
+    h = 420
+    pills = "".join(
+        f'<g class="sl" {d(0.5 + i * 0.15)}><rect x="560" y="{110 + i * 62}" width="272" height="46" rx="23" fill="none" stroke="{RULE}" stroke-width="1.5"/>'
+        f'<circle cx="586" cy="{133 + i * 62}" r="5" fill="{[TECH, STUDIO, LEARN, INK][i]}"/>'
+        f'<text x="604" y="{139 + i * 62}" font-family="{SANS}" font-size="17" fill="{INK}">{escape(t)}</text></g>'
+        for i, t in enumerate(SKILLS)
+    )
+    body = f"""
+<defs>
+  <linearGradient id="shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="600" y2="0">
+    <stop offset="0" stop-color="{INK}"/><stop offset=".42" stop-color="{INK}"/>
+    <stop offset=".5" stop-color="{TECH}"/><stop offset=".58" stop-color="{INK}"/>
+    <stop offset="1" stop-color="{INK}"/>
+    <animateTransform attributeName="gradientTransform" type="translate" values="-600 0;600 0;600 0"
+      keyTimes="0;.45;1" dur="7s" begin="1.6s" repeatCount="indefinite"/>
+  </linearGradient>
+</defs>
+<rect width="{W}" height="{h}" rx="14" fill="{PAPER}"/>
+<g class="f" {d(0)}>
+  <rect class="live" x="48" y="49" width="8" height="8" rx="2" fill="{TECH}"/>
+  <text x="66" y="57" font-family="{MONO}" font-size="12" letter-spacing="1" fill="{MUTED}">AI ENGINEER &#183; NAGPUR, INDIA</text>
+</g>
+<text class="r" {d(0.15)} x="44" y="190" font-family="{SERIF}" font-size="116" letter-spacing="-2.5" fill="{INK}">Sudhanshu</text>
+<text class="r" {d(0.3)} x="44" y="290" font-family="{SERIF}" font-style="italic" font-size="116" letter-spacing="-2.5" fill="url(#shine)">Patil</text>
+<g class="r" {d(0.55)}>
+  {text_lines(48, 338, ["I build grounded AI systems: agentic RAG,", "MCP tooling and voice agents."], 27, f'font-family="{SANS}" font-size="18" fill="{INK_SOFT}"')}
+</g>
+<g class="f" {d(0.8)}>
+  <text x="48" y="396" font-family="{MONO}" font-size="13" fill="{INK}">sudhanshu-patil.vercel.app</text>
+  <text class="nu" x="262" y="396" font-family="{MONO}" font-size="13" fill="{TECH}">&#8599;</text>
+</g>
+{pills}
+"""
+    write("hero.svg", svg(W, h, body, ["serif", "serif-i", "sans", "mono"],
+                          "Sudhanshu Patil. AI engineer. I build grounded AI systems: agentic RAG, MCP tooling and voice agents."))
 
 
-def save(name: str, body: str, width: int, height: int, font_data: str, delay: float = 0) -> None:
-    (OUT / name).write_text(start_svg(width, height, font_data, delay) + body + "</svg>\n", encoding="utf-8")
+# ---- 2 · world tiles ----------------------------------------------------------
+TILE_W, TILE_H = 880 / 3 - 8, 210  # 285.33: two 12px gaps across the row
 
 
-def hero(font_data: str) -> None:
-    body = f'''<g class="reveal"><text x="42" y="46" fill="{ACCENT}" font-size="13" font-weight="600" letter-spacing="2">AI ENGINEER · NAGPUR, INDIA</text>
-      <text x="42" y="104" fill="{FG}" font-size="42" font-weight="700">Sudhanshu Patil</text>
-      <text x="42" y="138" fill="{MUTED}" font-size="17">Building grounded AI systems — agentic RAG, MCP tooling and voice agents.</text>
-      <rect x="42" y="153" width="140" height="1" fill="{ACCENT}"/><text x="200" y="159" fill="{MUTED}" font-size="12">Available for AI Engineer / FDE roles</text></g>'''
-    save("hero.svg", body, 960, 184, font_data, 0)
+def count_up(num, word, x, y, attrs, begin, dur=1.1, frames=18):
+    """Number counts up from 0 with SMIL <set> frames (works inside <img>), easing out."""
+    m = re.match(r"([\d.]+)(.*)", num)
+    if not m:
+        return f'<text x="{x}" y="{y}" {attrs}>{escape(num)} <tspan font-style="italic">{escape(word)}</tspan></text>'
+    val, suf = float(m.group(1)), m.group(2)
+    dec = len(m.group(1).split(".")[1]) if "." in m.group(1) else 0
+    tail = f' <tspan font-style="italic">{escape(word)}</tspan>'
+    if os.environ.get("STATIC"):
+        return f'<text x="{x}" y="{y}" {attrs}>{escape(num)}{tail}</text>'
+    out = []
+    for i in range(frames + 1):
+        e = 1 - (1 - i / frames) ** 3
+        txt = num if i == frames else f"{val * e:.{dec}f}{suf}"
+        on = begin + dur * i / frames
+        off = "" if i == frames else f'<set attributeName="opacity" to="0" begin="{begin + dur * (i + 1) / frames:.3f}s"/>'
+        out.append(f'<text x="{x}" y="{y}" {attrs} opacity="0">{escape(txt)}{tail}'
+                   f'<set attributeName="opacity" to="1" begin="{on:.3f}s"/>{off}</text>')
+    return "".join(out)
 
 
-def tiles(font_data: str) -> None:
-    for i, (filename, title, subtitle, href) in enumerate([
-        ("tile-linkedin.svg", "LinkedIn", "Let's connect", "https://www.linkedin.com/in/sudhpatil"),
-        ("tile-work.svg", "Selected work", "Explore my portfolio", "https://sudhanshu-patil.vercel.app/"),
-        ("tile-contact.svg", "Get in touch", "sudhanshupatil588@gmail.com", "mailto:sudhanshupatil588@gmail.com"),
-    ]):
-        body = f'''<a href="{esc(href)}"><g class="reveal"><rect x="1" y="1" width="298" height="94" rx="17" fill="{SURFACE}" stroke="{LINE}"/>
-          <text x="22" y="40" fill="{FG}" font-size="17" font-weight="650">{esc(title)}</text><text x="22" y="65" fill="{MUTED}" font-size="12">{esc(subtitle)}</text>
-          <text x="269" y="42" fill="{ACCENT}" font-size="19">↗</text><rect x="22" y="80" width="44" height="2" rx="1" fill="{ACCENT}"/></g></a>'''
-        save(filename, body, 300, 96, font_data, .55 + i * .2)
+def tile(name, label, color, on, num, word, blurb, delay, pos):
+    lines = wrap(blurb, 34)
+    blurb_svg = "".join(
+        f'<text class="r" {d(delay + 0.75 + i * 0.1)} x="24" y="{150 + i * 20}" font-family="{SANS}" '
+        f'font-size="14" fill="{on}" opacity=".92">{escape(l)}</text>'
+        for i, l in enumerate(lines)
+    )
+    body = f"""
+<defs>
+  <clipPath id="card"><rect width="{TILE_W}" height="{TILE_H}" rx="14"/></clipPath>
+  <clipPath id="slot"><rect x="0" y="62" width="{TILE_W}" height="62"/></clipPath>
+  <linearGradient id="gl" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/>
+    <stop offset=".5" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+</defs>
+<g class="ti" {d(delay)}>
+  <g clip-path="url(#card)">
+    <rect width="{TILE_W}" height="{TILE_H}" fill="{color}"/>
+    <circle class="rg" {d(delay + 0.5)} cx="{TILE_W - 40}" cy="{TILE_H - 40}" r="60" fill="none" stroke="{on}" stroke-opacity=".5" stroke-width="2"/>
+    <rect class="sh" style="animation-delay:{delay + 1.4:.2f}s" x="0" y="-20" width="90" height="{TILE_H + 40}" fill="url(#gl)" transform="translate(-260 0)"/>
+  </g>
+  <text class="sl" {d(delay + 0.35)} x="24" y="38" font-family="{MONO}" font-size="12" letter-spacing="1.2" fill="{on}">{label}</text>
+  <g class="ai" {d(delay + 0.5)}><text class="n" style="animation-delay:{delay + 1.3:.2f}s" x="250" y="38" font-family="{MONO}" font-size="14" fill="{on}">&#8594;</text></g>
+  <g clip-path="url(#slot)"><g class="ro" {d(delay + 0.45)}>
+    {count_up(num, word, 22, 112, f'font-family="{SERIF}" font-size="44" fill="{on}"', delay + 0.45)}
+  </g></g>
+  {blurb_svg}
+</g>
+"""
+    write(f"{name}.svg", svg(TILE_W, TILE_H, body, ["serif", "serif-i", "sans", "mono"],
+                             f"{label}: {num} {word}. {blurb}", left=4 * pos, right=8 - 4 * pos))
 
 
-def summary(days: list[dict]) -> tuple[list[tuple[str, int]], int, int, str]:
-    today = dt.datetime.now(dt.timezone.utc).date()
-    recent = [day for day in days if today - dt.timedelta(days=364) <= day["date"] <= today]
-    monthly: dict[tuple[int, int], int] = defaultdict(int)
-    for day in recent:
-        monthly[(day["date"].year, day["date"].month)] += day["count"]
-    cursor = today.replace(day=1)
-    months = []
-    for _ in range(12):
-        months.append((cursor.strftime("%b"), monthly.get((cursor.year, cursor.month), 0)))
-        cursor = (cursor - dt.timedelta(days=1)).replace(day=1)
-    months.reverse()
-    active = {day["date"] for day in recent if day["count"] > 0}
-    cursor_day = today if today in active else today - dt.timedelta(days=1)
-    streak = 0
-    while cursor_day in active:
-        streak += 1
-        cursor_day -= dt.timedelta(days=1)
-    busiest = max(recent, key=lambda day: day["count"], default=None)
-    busiest_label = busiest["date"].strftime("%b %-d") if busiest and busiest["count"] else "—"
-    return months, len(active), streak, busiest_label
-
-
-def stats_card(days: list[dict], font_data: str) -> None:
-    months, active, streak, busiest = summary(days)
-    maximum = max((value for _, value in months), default=0) or 1
+# ---- 3 · activity (monthly bars) ------------------------------------------------
+def activity(data):
+    h = 340
+    monthly = data["monthly"][-12:]
+    best = max(monthly[:-1] or monthly, key=lambda m: m["total"])
+    top = best["total"]
+    x0, x1, base, maxh, gap = 40, 600, 292, 140, 10
+    bw = (x1 - x0 - gap * (len(monthly) - 1)) / len(monthly)
     bars = []
-    for i, (month, value) in enumerate(months):
-        x, height = 48 + i * 66, max(3, round(90 * value / maximum))
-        bars.append(f'<rect x="{x}" y="{194-height}" width="40" height="{height}" rx="6" fill="{ACCENT}" opacity="{.38 + .62*value/maximum:.2f}"/>')
-        bars.append(f'<text x="{x+2}" y="218" fill="{MUTED}" font-size="11">{month}</text>')
-    body = f'''<g class="reveal"><text x="42" y="42" fill="{ACCENT}" font-size="13" font-weight="600" letter-spacing="1.5">CONTRIBUTIONS · LAST 12 MONTHS</text>{''.join(bars)}
-      <line x1="42" y1="195" x2="900" y2="195" stroke="{LINE}"/><text x="48" y="259" fill="{FG}" font-size="20" font-weight="650">{streak} days</text><text x="48" y="280" fill="{MUTED}" font-size="12">current streak</text>
-      <text x="344" y="259" fill="{FG}" font-size="20" font-weight="650">{active}</text><text x="344" y="280" fill="{MUTED}" font-size="12">active days</text><text x="640" y="259" fill="{FG}" font-size="20" font-weight="650">{esc(busiest)}</text><text x="640" y="280" fill="{MUTED}" font-size="12">busiest day</text></g>'''
-    save("contributions.svg", body, 960, 310, font_data, 1.15)
+    for i, m in enumerate(monthly):
+        partial = i == len(monthly) - 1
+        is_best = m is best
+        bh = max(4, round(m["total"] / top * maxh))
+        x = x0 + i * (bw + gap)
+        fill = TECH if is_best else ("#c9c9c4" if partial else INK)
+        label = datetime.date.fromisoformat(m["month"] + "-01").strftime("%b")
+        bars.append(
+            f'<rect class="g" style="animation-delay:{2.2 + i * 0.07:.2f}s" x="{x:.1f}" y="{base - bh}" '
+            f'width="{bw:.1f}" height="{bh}" rx="4" fill="{fill}"><title>{label}: {m["total"]:,}</title></rect>'
+            f'<text class="f" style="animation-delay:{2.2 + i * 0.07:.2f}s" x="{x + bw / 2:.1f}" y="{base + 22}" '
+            f'text-anchor="middle" font-family="{MONO}" font-size="11" fill="{MUTED}">{label}</text>'
+        )
+        if is_best:
+            bars.append(
+                f'<text class="p" style="animation-delay:3.2s" x="{x + bw / 2:.1f}" y="{base - bh - 10}" '
+                f'text-anchor="middle" font-family="{MONO}" font-size="11" fill="{TECH}">{m["total"]:,}</text>'
+            )
+    cs = data["current_streak"]["length"]
+    ls = data["longest_streak"]["length"]
+    streak_note = "current streak, and the longest" if cs >= ls else f"current streak, longest {ls}"
+    total_days = len(data["days"])
+    stats = [
+        (f'{cs} <tspan font-style="italic">days</tspan>', streak_note),
+        (f'{data["active_days"]}<tspan fill="#8e8e93"> / {total_days}</tspan>', "days with a commit"),
+        (f'{data["best_day"]["count"]}', "on the busiest day"),
+    ]
+    side = []
+    for i, (big, small) in enumerate(stats):
+        y = 104 + i * 92
+        side.append(
+            f'<g class="r" {d(2.6 + i * 0.15)}>'
+            f'<text x="650" y="{y}" font-family="{SERIF}" font-size="40" fill="{INK}">{big}</text>'
+            f'<text x="650" y="{y + 24}" font-family="{SANS}" font-size="13" fill="{MUTED}">{small}</text></g>'
+        )
+        if i < 2:
+            side.append(f'<rect class="f" {d(2.6)} x="650" y="{y + 44}" width="190" height="1" fill="{RULE}"/>')
+    body = f"""
+<rect width="{W}" height="{h}" rx="14" fill="{PAPER}"/>
+<text class="f" {d(1.9)} x="40" y="58" font-family="{MONO}" font-size="12" letter-spacing="1" fill="{MUTED}">THE LAST 12 MONTHS ON GITHUB</text>
+<text class="r" {d(2.0)} x="38" y="114" font-family="{SERIF}" font-size="52" fill="{INK}">{data["total_contributions"]:,} <tspan font-style="italic">contributions</tspan></text>
+{''.join(bars)}
+{''.join(side)}
+"""
+    write("activity.svg", svg(W, h, body, ["serif", "serif-i", "sans", "mono"],
+                              f'{data["total_contributions"]:,} contributions in the last year, {cs}-day streak'))
 
 
-def repos(font_data: str) -> None:
-    for i, (title, tagline, description, href, stack) in enumerate(FEATURED, start=1):
-        slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
-        body = f'''<a href="{esc(href)}"><g class="reveal"><text x="38" y="42" fill="{ACCENT}" font-size="12" font-weight="600" letter-spacing="1.4">FEATURED PROJECT / {i:02d}</text>
-          <text x="38" y="86" fill="{FG}" font-size="28" font-weight="700">{esc(title)}</text><text x="38" y="116" fill="{FG}" font-size="16" font-weight="500">{esc(tagline)}</text>
-          <text x="38" y="143" fill="{MUTED}" font-size="13">{esc(description)}</text><text x="885" y="42" fill="{MUTED}" font-size="10" font-weight="600" text-anchor="end" letter-spacing="1">{esc(stack)}</text>
-          <text x="886" y="91" fill="{ACCENT}" font-size="23">↗</text><rect x="38" y="158" width="82" height="2" rx="1" fill="{ACCENT}"/></g></a>'''
-        save(f"repo-{slug}.svg", body, 960, 178, font_data, 2 + i * .48)
+# ---- 4 · repo cards -----------------------------------------------------------
+REPO_H = 170
+REPOS = [  # (slug, title, tagline, meta, colour)
+    ("mediclaim", "MediClaim", "Agentic RAG for insurance claims.", "Python", TECH),
+    ("waypoint", "Waypoint", "An AI travel concierge that plans and adapts.", "AI \u00b7 live", STUDIO),
+    ("cedar-lane", "Cedar Lane", "Voice AI receptionist that books real appointments.", "TypeScript", LEARN),
+    ("redline", "Redline", "Diffs for engineering drawings.", "Python", INK),
+    ("telecom-triage", "Telecom Triage", "Confidence-gated AI for customer ops.", "Python", TECH),
+    ("ai-email-reply", "AI Email Reply", "Grounded email drafts, scored.", "Python", STUDIO),
+    ("glance", "Glance", "Open-source portfolio assistant.", "JavaScript", LEARN),
+]
+ROWS = [REPOS[:3], REPOS[3:]]
 
 
-def graph(days: list[dict], font_data: str) -> None:
-    today = dt.datetime.now(dt.timezone.utc).date()
-    first = today - dt.timedelta(days=364)
-    start = first - dt.timedelta(days=first.weekday())
-    counts = {day["date"]: day["count"] for day in days}
-    colors = ["#1b1d21", "#26351b", "#3e5b29", "#668c3b", ACCENT]
-    cells, date = [], start
-    while date <= today:
-        week, value = (date-start).days // 7, counts.get(date, 0)
-        level = 0 if value == 0 else min(4, 1 + int(value >= 2) + int(value >= 5) + int(value >= 10))
-        cells.append(f'<rect x="{48+week*15}" y="{80+date.weekday()*15}" width="11" height="11" rx="3" fill="{colors[level]}"/>')
-        date += dt.timedelta(days=1)
-    labels, date, prev = [], start, None
-    while date <= today:
-        if date.weekday() == 0 and date.month != prev:
-            labels.append(f'<text x="{48+((date-start).days//7)*15}" y="68" fill="{MUTED}" font-size="10">{date.strftime("%b")}</text>')
-            prev = date.month
-        date += dt.timedelta(days=1)
-    legend = ''.join(f'<rect x="{770+i*19}" y="194" width="12" height="12" rx="3" fill="{color}"/>' for i, color in enumerate(colors))
-    body = f'''<g class="reveal"><text x="42" y="42" fill="{ACCENT}" font-size="13" font-weight="600" letter-spacing="1.5">CONTRIBUTION GRAPH</text><text x="45" y="86" fill="{MUTED}" font-size="10">M</text><text x="45" y="116" fill="{MUTED}" font-size="10">W</text><text x="45" y="146" fill="{MUTED}" font-size="10">F</text>{''.join(labels)}{''.join(cells)}{legend}<text x="45" y="216" fill="{MUTED}" font-size="11">Less</text><text x="895" y="216" fill="{MUTED}" font-size="11" text-anchor="end">More</text></g>'''
-    save("contribution-graph.svg", body, 960, 238, font_data, 6)
+def repo_card(i, n, slug, name, desc, meta, color):
+    gap = 12
+    w = W / n - gap * (n - 1) / n
+    left, right = gap * i / n, gap * (n - 1 - i) / n
+    delay = 4.6 + i * 0.12
+    body = f"""
+<rect width="{w:.3f}" height="{REPO_H}" rx="14" fill="{PAPER}"/>
+<g class="r" {d(delay)}>
+  <rect x="24" y="30" width="8" height="8" rx="2" fill="{color}"/>
+  <text x="40" y="39" font-family="{SANS}" font-weight="600" font-size="18" fill="{INK}">{escape(name)}</text>
+  <text class="n" style="animation-delay:{delay + 1:.2f}s" x="{w - 30:.1f}" y="39" font-family="{MONO}" font-size="14" fill="{MUTED}">&#8599;</text>
+  {text_lines(24, 74, wrap(desc, int((w - 48) / 7.0)), 21, f'font-family="{SANS}" font-size="14" fill="{INK_SOFT}"')}
+  <text x="24" y="{REPO_H - 24}" font-family="{MONO}" font-size="12" fill="{MUTED}">{escape(meta)}</text>
+</g>
+"""
+    write(f"repo-{slug}.svg", svg(w, REPO_H, body, ["sans", "sans-b", "mono"], f"{name}: {desc}",
+                                  left=left, right=right))
 
 
-def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    characters = "Sudhanshu Patil AI ENGINEER NAGPUR INDIA Building grounded AI systems agentic RAG MCP tooling voice agents Available for AI Engineer FDE roles LinkedIn Let's connect Selected work Explore my portfolio Get in touch MediClaim Waypoint Cedar Lane Redline Telecom Triage AI Email Reply Glance Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec current streak active days busiest day 0123456789↗·—"
-    font_data = font_subset(characters)
-    days = load_days()
-    hero(font_data)
-    tiles(font_data)
-    stats_card(days, font_data)
-    repos(font_data)
-    graph(days, font_data)
-    print(f"Rendered {len(list(OUT.glob('*.svg')))} SVG cards ({'static' if STATIC else 'animated'}).")
+def section_title(text, italic, theme):
+    fg = "#e6edf3" if theme == "dark" else INK
+    body = (
+        f'<text class="r" {d(4.4)} x="2" y="46" font-family="{SERIF}" font-size="34" fill="{fg}">{escape(text)} '
+        f'<tspan font-style="italic">{escape(italic)}</tspan></text>'
+    )
+    write(f"title-work-{theme}.svg", svg(W, 64, body, ["serif", "serif-i"], f"{text} {italic}", bottom=0))
+
+
+# ---- 5 · blue contribution graph -----------------------------------------------
+BLUE = [PAPER_DEEP, "#c8d3ff", "#94a8ff", "#6280ff", TECH, "#1a3be0"]
+
+
+def level_for(c):
+    return 0 if c == 0 else 1 if c <= 5 else 2 if c <= 15 else 3 if c <= 30 else 4 if c <= 50 else 5
+
+
+def heatmap(data):
+    days = data["days"]
+    first = datetime.date.fromisoformat(days[0]["date"])
+    lead = (first.weekday() + 1) % 7  # sunday = 0
+    cell, step, gx, gy = 12, 15, 44, 96
+    cells, months, seen = [], [], set()
+    for i, day in enumerate(days):
+        k = i + lead
+        col, row = divmod(k, 7)
+        date = datetime.date.fromisoformat(day["date"])
+        if date.day <= 7 and (date.year, date.month) not in seen and row == 0:
+            seen.add((date.year, date.month))
+            months.append((col, date.strftime("%b")))
+        c = day["count"]
+        delay = 1.0 + col * 0.03 + row * 0.02
+        cells.append(
+            f'<rect class="p" style="animation-delay:{delay:.2f}s" x="{gx + col * step}" y="{gy + row * step}" '
+            f'width="{cell}" height="{cell}" rx="3" fill="{BLUE[level_for(c)]}">'
+            f'<title>{day["date"]}: {c} contribution{"s" if c != 1 else ""}</title></rect>'
+        )
+    ncols = (len(days) + lead + 6) // 7
+    right = gx + ncols * step - 3
+    labels = "".join(
+        f'<text x="{gx + col * step}" y="{gy + 7 * step + 16}" font-family="{MONO}" font-size="11" fill="{MUTED}">{m}</text>'
+        for col, m in months if col < ncols - 12
+    )
+    legend_x = right - len(BLUE) * 14
+    legend = "".join(
+        f'<rect x="{legend_x + i * 14}" y="{gy + 7 * step + 6}" width="11" height="11" rx="2.5" fill="{c}"/>'
+        for i, c in enumerate(BLUE)
+    )
+    h = gy + 7 * step + 44
+    body = f"""
+<rect width="{W}" height="{h}" rx="14" fill="{PAPER}"/>
+<text class="r" {d(0.8)} x="42" y="62" font-family="{SERIF}" font-size="34" fill="{INK}">Every day, <tspan font-style="italic" fill="{TECH}">in blue</tspan></text>
+<text class="f" {d(0.8)} x="{right}" y="60" text-anchor="end" font-family="{MONO}" font-size="12" letter-spacing="1" fill="{MUTED}">REFRESHED DAILY</text>
+{''.join(cells)}
+<g class="f" {d(2.4)}>{labels}
+<text x="{legend_x - 8}" y="{gy + 7 * step + 16}" text-anchor="end" font-family="{MONO}" font-size="11" fill="{MUTED}">less</text>
+{legend}
+<text x="{legend_x + len(BLUE) * 14 + 2}" y="{gy + 7 * step + 16}" font-family="{MONO}" font-size="11" fill="{MUTED}">more</text></g>
+"""
+    write("heatmap.svg", svg(W, h, body, ["serif", "serif-i", "mono"],
+                             f'Contribution graph: {data["total_contributions"]:,} contributions in the last year'))
 
 
 if __name__ == "__main__":
-    main()
+    data = load_stats()
+    hero()
+    tile("build", "BUILD", TECH, "#ffffff", "7", "projects",
+         "Agentic RAG, voice agents, MCP tooling and eval-driven AI.", 3.1, 0)
+    tile("connect", "CONNECT", STUDIO, "#ffffff", "LinkedIn", "",
+         "Open to AI Engineer and forward-deployed roles.", 3.35, 1)
+    tile("contact", "CONTACT", LEARN, INK, "Say", "hello",
+         "Email me, I read everything.", 3.6, 2)
+    activity(data)
+    for row in ROWS:
+        for i, r in enumerate(row):
+            repo_card(i, len(row), *r)
+    section_title("Selected", "work", "dark")
+    section_title("Selected", "work", "light")
+    heatmap(data)

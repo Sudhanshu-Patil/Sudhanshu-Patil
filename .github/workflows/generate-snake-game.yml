@@ -39,9 +39,6 @@ jobs:
             exit 1
           }
 
-      - name: Install font subsetter
-        run: python -m pip install 'fonttools[woff,woff2]'
-
       - name: Render animated profile cards
         run: python scripts/render_profile_cards.py
 
