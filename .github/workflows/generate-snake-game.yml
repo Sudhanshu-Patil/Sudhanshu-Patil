@@ -1,6 +1,7 @@
 name: generate animation
 
 on:
+  # Refresh the contribution calendar and profile cards daily.
   schedule:
     - cron: "17 3 * * *"
   workflow_dispatch:
@@ -26,17 +27,22 @@ jobs:
 
       - name: Fetch contribution calendar
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PROFILE_TOKEN }}
         run: |
+          set -euo pipefail
           mkdir -p data
           FROM=$(date -u -d '1 year ago' +%Y-%m-%dT%H:%M:%SZ)
-          gh api graphql \
-            -f query='query($login: String!, $from: DateTime!) { user(login: $login) { contributionsCollection(from: $from) { contributionCalendar { totalContributions weeks { contributionDays { date contributionCount } } } } }' \
-            -f login="${GITHUB_REPOSITORY_OWNER}" \
-            -f from="${FROM}" \
-            | jq '.data.user.contributionsCollection.contributionCalendar' > data/contributions.json
+          RESPONSE=$(gh api graphql \
+            -f query='query($login: String!, $from: DateTime!) { user(login: $login) { contributionsCollection(from: $from) { contributionCalendar { totalContributions weeks { contributionDays { date contributionCount } } } } } }' \
+            -f login="$GITHUB_REPOSITORY_OWNER" \
+            -f from="$FROM")
+          echo "$RESPONSE" | jq -e '.data.user.contributionsCollection.contributionCalendar | select(.weeks != null)' > data/contributions.json || {
+            echo "Contribution query failed. Add a PROFILE_TOKEN repository secret with read:user permission; response follows:" >&2
+            echo "$RESPONSE" | jq '.errors // .data' >&2
+            exit 1
+          }
 
-      - name: Install font tooling
+      - name: Install font subsetter
         run: python -m pip install 'fonttools[woff,woff2]'
 
       - name: Render animated profile cards
